@@ -2,6 +2,7 @@ import sys
 import pygame
 
 from settings import Settings
+from ship import Ship
 
 class AlienInvasion:
     # Main class to manage app resources.
@@ -13,6 +14,7 @@ class AlienInvasion:
         self.screen = pygame.display.set_mode(
             (self.settings.screen_width, self.settings.screen_height))
         self.bg_color = self.settings.screen_bg
+        self.ship = Ship(self)
         pygame.display.set_caption('Alien Invasion')
 
     def run_game(self):
@@ -22,6 +24,7 @@ class AlienInvasion:
                 if event.type == pygame.QUIT:
                     sys.exit()
             self.screen.fill(self.bg_color)
+            self.ship.blitme()
             pygame.display.flip()
 
 if __name__ == "__main__":
