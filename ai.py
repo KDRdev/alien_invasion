@@ -1,14 +1,18 @@
 import sys
 import pygame
 
+from settings import Settings
+
 class AlienInvasion:
     # Main class to manage app resources.
 
     def __init__(self):
         # Initializes a game and creates game resources.
         pygame.init()
-        self.screen = pygame.display.set_mode((1200, 800))
-        self.bg_color = (230, 230, 230)
+        self.settings = Settings()
+        self.screen = pygame.display.set_mode(
+            (self.settings.screen_width, self.settings.screen_height))
+        self.bg_color = self.settings.screen_bg
         pygame.display.set_caption('Alien Invasion')
 
     def run_game(self):
