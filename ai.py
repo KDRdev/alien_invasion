@@ -3,6 +3,7 @@ import pygame
 
 from settings import Settings
 from ship import Ship
+from bullet import Bullet
 
 class AlienInvasion:
     # Main class to manage app resources.
@@ -15,6 +16,7 @@ class AlienInvasion:
             (self.settings.screen_width, self.settings.screen_height))
         self.bg_color = self.settings.screen_bg
         self.ship = Ship(self)
+        self.bullets = pygame.sprite.Group()
         pygame.display.set_caption('Alien Invasion')
 
     def run_game(self):
@@ -23,7 +25,14 @@ class AlienInvasion:
             self._check_updates()
             self.screen.fill(self.bg_color)
             self.ship.update()
+            self.bullets.update()
+            for bullet in self.bullets.copy():
+                if bullet.rect.bottom <= 0:
+                    self.bullets.remove(bullet)
+                print(len(self.bullets))
             self.ship.blitme()
+            for bullet in self.bullets.sprites():
+                bullet.draw_bullet()
             pygame.display.flip()
     
     def _check_updates(self):
@@ -40,6 +49,8 @@ class AlienInvasion:
             self.ship.moving_left = True
         elif event.key == pygame.K_RIGHT:
             self.ship.moving_right = True
+        elif event.key == pygame.K_SPACE:
+            self._fire_bullet()
         elif event.key == pygame.K_q:
             sys.exit()
 
@@ -48,6 +59,10 @@ class AlienInvasion:
             self.ship.moving_left = False
         elif event.key == pygame.K_RIGHT:
             self.ship.moving_right = False
+
+    def _fire_bullet(self):
+        new_bullet = Bullet(self)
+        self.bullets.add(new_bullet)
 
 if __name__ == "__main__":
     ai = AlienInvasion()
