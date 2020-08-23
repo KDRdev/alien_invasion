@@ -4,6 +4,7 @@ import pygame
 from settings import Settings
 from ship import Ship
 from bullet import Bullet
+from alien import Alien
 
 class AlienInvasion:
     # Main class to manage app resources.
@@ -11,13 +12,15 @@ class AlienInvasion:
     def __init__(self):
         # Initializes a game and creates game resources.
         pygame.init()
+        pygame.display.set_caption('Alien Invasion')
         self.settings = Settings()
         self.screen = pygame.display.set_mode(
             (self.settings.screen_width, self.settings.screen_height))
         self.bg_color = self.settings.screen_bg
         self.ship = Ship(self)
         self.bullets = pygame.sprite.Group()
-        pygame.display.set_caption('Alien Invasion')
+        self.aliens = pygame.sprite.Group()
+        self._create_alien_fleet()
 
     def run_game(self):
         # A main game loop.
@@ -29,8 +32,30 @@ class AlienInvasion:
             self.ship.blitme()
             for bullet in self.bullets.sprites():
                 bullet.draw_bullet()
+            self.aliens.draw(self.screen)
             pygame.display.flip()
     
+    def _create_alien(self, alien_number, row_number):
+        alien = Alien(self)
+        alien_width, alien_height = alien.rect.size
+        alien.x = alien_width + 2 * alien_width * alien_number
+        alien.rect.x = alien.x
+        alien.rect.y = alien_height + 2 * alien_height * row_number
+        self.aliens.add(alien)
+    
+    def _create_alien_fleet(self):
+        alien = Alien(self)
+        alien_width, alien_height = alien.rect.size
+        available_space_x = self.settings.screen_width - (2 * alien_width)
+        number_aliens_x = available_space_x // (2 * alien_width)
+        ship_height = self.ship.rect.height
+        available_space_y = (self.settings.screen_height - (3 * alien_height) -
+                            ship_height)
+        rows_number = available_space_y // (2 * alien_height)
+        for row_number in range(rows_number):
+            for alien_number in range(number_aliens_x):
+                self._create_alien(alien_number, row_number)
+
     def _check_updates(self):
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
