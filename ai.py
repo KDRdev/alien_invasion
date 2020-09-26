@@ -28,7 +28,8 @@ class AlienInvasion:
             self._check_updates()
             self.screen.fill(self.bg_color)
             self.ship.update()
-            self.update_bullet()
+            self.update_bullets()
+            self.update_aliens()
             self.ship.blitme()
             for bullet in self.bullets.sprites():
                 bullet.draw_bullet()
@@ -65,12 +66,26 @@ class AlienInvasion:
             elif event.type == pygame.KEYUP:
                 self._check_keyup_events(event)
 
-    def update_bullet(self):
+    def update_bullets(self):
         self.bullets.update()
         for bullet in self.bullets.copy():
             if bullet.rect.bottom <= 0:
                 self.bullets.remove(bullet)
-            print(len(self.bullets))
+
+    def update_aliens(self):
+        self._check_aliens_edges()
+        self.aliens.update()
+
+    def _check_aliens_edges(self):
+        for alien in self.aliens.sprites():
+            if alien.check_edges():
+                self._change_aliens_direction()
+                break
+
+    def _change_aliens_direction(self):
+        for alien in self.aliens.sprites():
+            alien.rect.y += self.settings.aliens_drop_speed
+        self.settings.aliens_direction *= -1
 
     def _check_keydown_events(self, event):
         if event.key == pygame.K_LEFT:
@@ -95,4 +110,4 @@ class AlienInvasion:
 
 if __name__ == "__main__":
     ai = AlienInvasion()
-    ai.run_game()    
+    ai.run_game()
